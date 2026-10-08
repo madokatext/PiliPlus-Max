@@ -36,6 +36,7 @@ class SplitModel extends SettingsModel {
     super.titleStyle,
     required this.normalModel,
     required this.switchModel,
+    this.watchKey,
   });
 
   @override
@@ -51,8 +52,17 @@ class SplitModel extends SettingsModel {
 
   final SwitchModel switchModel;
 
+  final String? watchKey;
+
   @override
-  Widget get widget => SetSwitchItem(
+  Widget get widget => watchKey == null
+      ? _buildItem()
+      : StreamBuilder(
+          stream: GStorage.setting.watch(key: watchKey),
+          builder: (context, _) => _buildItem(),
+        );
+
+  Widget _buildItem() => SetSwitchItem(
     title: effectiveTitle,
     subtitle: effectiveSubtitle,
     setKey: switchModel.setKey,
