@@ -81,6 +81,7 @@ class SearchVideoController
   late DateTime pubEndDate;
   bool customPubBeginDate = false;
   bool customPubEndDate = false;
+  bool _unboundedPubBegin = false;
 
   void onShowFilterDialog(BuildContext context) {
     showModalBottomSheet(
@@ -106,29 +107,37 @@ class SearchVideoController
                 showDatePicker(
                   context: context,
                   initialDate: isFirst ? pubBeginDate : pubEndDate,
-                  firstDate: isFirst ? DateTime(2009, 6, 26) : pubBeginDate,
+                  firstDate: DateTime(2009, 6, 26),
                   lastDate: isFirst ? pubEndDate : DateTime.now(),
                 ).then((selectedDate) {
                   if (selectedDate != null) {
                     if (isFirst) {
                       customPubBeginDate = true;
+                      _unboundedPubBegin = false;
                       pubBeginDate = selectedDate;
                     } else {
                       customPubEndDate = true;
                       pubEndDate = selectedDate;
+                      if (pubEndDate.isBefore(pubBeginDate)) {
+                        // 自动对齐仅用于显示，重新选择起始日期前不设下限。
+                        pubBeginDate = pubEndDate;
+                        customPubBeginDate = false;
+                        _unboundedPubBegin = true;
+                      }
                     }
                     pubTimeType = null;
                     SmartDialog.dismiss();
-                    pubBegin =
-                        DateTime(
-                          pubBeginDate.year,
-                          pubBeginDate.month,
-                          pubBeginDate.day,
-                          0,
-                          0,
-                          0,
-                        ).millisecondsSinceEpoch ~/
-                        1000;
+                    pubBegin = _unboundedPubBegin
+                        ? null
+                        : DateTime(
+                                pubBeginDate.year,
+                                pubBeginDate.month,
+                                pubBeginDate.day,
+                                0,
+                                0,
+                                0,
+                              ).millisecondsSinceEpoch ~/
+                              1000;
                     pubEnd =
                         DateTime(
                           pubEndDate.year,
@@ -177,6 +186,7 @@ class SearchVideoController
                         text: e.label,
                         onTap: (text) {
                           pubTimeType = e;
+                          _unboundedPubBegin = false;
                           DateTime now = DateTime.now();
                           if (e == VideoPubTimeType.all) {
                             pubBegin = null;
