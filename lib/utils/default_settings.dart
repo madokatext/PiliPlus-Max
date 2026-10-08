@@ -103,6 +103,7 @@ const Map<String, Object> defaultSettingValues = {
   'enableTapDm': false,
   'externalVideoLinkOpenInDetail': true,
   'fontWeight': 4,
+  'fullScreenDanmakuToggleOnLeft': true,
   'fullScreenMode': 0,
   'highLikeDanmakuThreshold': 100,
   'homeCardAspectRatio': 'fourThree',

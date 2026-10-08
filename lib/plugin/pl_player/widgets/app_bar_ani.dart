@@ -13,8 +13,10 @@ class PlayerControlBarBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => StreamBuilder(
-    stream: GStorage.setting.watch(
-      key: SettingBoxKey.playerControlBarThicknessScale,
+    stream: GStorage.setting.watch().where(
+      (event) =>
+          event.key == SettingBoxKey.playerControlBarThicknessScale ||
+          event.key == SettingBoxKey.fullScreenDanmakuToggleOnLeft,
     ),
     builder: (context, _) => builder(context),
   );

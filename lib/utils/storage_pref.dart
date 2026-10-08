@@ -1173,6 +1173,11 @@ static bool get seekPreviewFollowGesture => _setting.get(
     defaultValue: false,
   );
 
+  static bool get fullScreenDanmakuToggleOnLeft => _setting.get(
+    SettingBoxKey.fullScreenDanmakuToggleOnLeft,
+    defaultValue: true,
+  );
+
   static bool get enableShowLiveDanmaku =>
       _setting.get(SettingBoxKey.enableShowLiveDanmaku, defaultValue: true);
 

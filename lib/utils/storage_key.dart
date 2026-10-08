@@ -269,6 +269,7 @@ seekPreviewScale = 'seekPreviewScale',
 
   static const String enableShowDanmaku = 'enableShowDanmaku',
       rememberDanmakuSwitchState = 'rememberDanmakuSwitchState',
+      fullScreenDanmakuToggleOnLeft = 'fullScreenDanmakuToggleOnLeft',
       enableShowLiveDanmaku = 'enableShowLiveDanmaku',
       pipNoDanmaku = 'pipNoDanmaku',
       showVipDanmaku = 'showVipDanmaku',

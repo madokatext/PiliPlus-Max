@@ -1056,11 +1056,13 @@ ui.PointerDeviceKind? _gesturePointerKind;
     };
 
     final isNotFileSource = !plPlayerController.isFileSource;
+    final danmakuToggleOnLeft = Pref.fullScreenDanmakuToggleOnLeft;
 
     List<BottomControlType> userSpecifyItemLeft = [
       .playOrPause,
       if (!officialTimeStyle) .time,
       if (!isNotFileSource || anySeason) ...[.pre, .next],
+      if (isFullScreen && danmakuToggleOnLeft) .danmakuToggle,
     ];
 
     final flag =
@@ -1068,7 +1070,7 @@ ui.PointerDeviceKind? _gesturePointerKind;
     final List<BottomControlType> userSpecifyItemRight = [
       // PlayerBar 会把这一组整体贴右；第一项就是右侧组最左侧按钮。
       if (isNotFileSource) .steinProgress,
-      if (isFullScreen) .danmakuToggle,
+      if (isFullScreen && !danmakuToggleOnLeft) .danmakuToggle,
       if (isFullScreen) .skipOp,
       if (isNotFileSource && plPlayerController.showDmChart) .dmChart,
       if (isNotFileSource && plPlayerController.showViewPoints) .viewPoints,

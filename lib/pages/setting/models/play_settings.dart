@@ -41,6 +41,13 @@ List<SettingsModel> get playSettings => [
     defaultVal: false,
   ),
   NormalModel(
+    title: '全屏弹幕开关位置',
+    getSubtitle: () =>
+        '当前：${Pref.fullScreenDanmakuToggleOnLeft ? '左侧' : '右侧'}',
+    leading: const Icon(Icons.horizontal_distribute_outlined),
+    onTap: _showFullScreenDanmakuTogglePositionDialog,
+  ),
+  NormalModel(
     title: '弹幕中文字体',
     getSubtitle: () =>
         '当前：${LocalFontManager.selectionLabel(.danmakuChinese)}',
@@ -542,6 +549,30 @@ Future<void> _showLongPressSpeedTriggerDelayDialog(
     await GStorage.setting.put(
       SettingBoxKey.longPressSpeedTriggerDelay,
       res.toInt(),
+    );
+    setState();
+  }
+}
+
+Future<void> _showFullScreenDanmakuTogglePositionDialog(
+  BuildContext context,
+  VoidCallback setState,
+) async {
+  final result = await showDialog<bool>(
+    context: context,
+    builder: (context) => SelectDialog<bool>(
+      title: '全屏弹幕开关位置',
+      value: Pref.fullScreenDanmakuToggleOnLeft,
+      values: const [
+        (true, '左侧（左侧按钮组最右端）'),
+        (false, '右侧'),
+      ],
+    ),
+  );
+  if (result != null) {
+    await GStorage.setting.put(
+      SettingBoxKey.fullScreenDanmakuToggleOnLeft,
+      result,
     );
     setState();
   }
