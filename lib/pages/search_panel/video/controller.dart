@@ -81,7 +81,7 @@ class SearchVideoController
   late DateTime pubEndDate;
   bool customPubBeginDate = false;
   bool customPubEndDate = false;
-  bool _unboundedPubBegin = false;
+  static final _earliestPubDate = DateTime(2009, 6, 26);
 
   void onShowFilterDialog(BuildContext context) {
     showModalBottomSheet(
@@ -107,37 +107,30 @@ class SearchVideoController
                 showDatePicker(
                   context: context,
                   initialDate: isFirst ? pubBeginDate : pubEndDate,
-                  firstDate: DateTime(2009, 6, 26),
+                  firstDate: _earliestPubDate,
                   lastDate: isFirst ? pubEndDate : DateTime.now(),
                 ).then((selectedDate) {
                   if (selectedDate != null) {
                     if (isFirst) {
                       customPubBeginDate = true;
-                      _unboundedPubBegin = false;
                       pubBeginDate = selectedDate;
                     } else {
                       customPubEndDate = true;
                       pubEndDate = selectedDate;
                       if (pubEndDate.isBefore(pubBeginDate)) {
-                        // 自动对齐仅用于显示，重新选择起始日期前不设下限。
+                        // 自动对齐不算手动选择起始日期，继续使用完整历史范围。
                         pubBeginDate = pubEndDate;
                         customPubBeginDate = false;
-                        _unboundedPubBegin = true;
                       }
                     }
                     pubTimeType = null;
                     SmartDialog.dismiss();
-                    pubBegin = _unboundedPubBegin
-                        ? null
-                        : DateTime(
-                                pubBeginDate.year,
-                                pubBeginDate.month,
-                                pubBeginDate.day,
-                                0,
-                                0,
-                                0,
-                              ).millisecondsSinceEpoch ~/
-                              1000;
+                    // 时间筛选需要有效的起止参数，未手动设置起始日期时
+                    // 使用最早可选日期作为实际下限，显示值仍可与终止日期对齐。
+                    pubBegin =
+                        (customPubBeginDate ? pubBeginDate : _earliestPubDate)
+                            .millisecondsSinceEpoch ~/
+                        1000;
                     pubEnd =
                         DateTime(
                           pubEndDate.year,
@@ -186,7 +179,8 @@ class SearchVideoController
                         text: e.label,
                         onTap: (text) {
                           pubTimeType = e;
-                          _unboundedPubBegin = false;
+                          customPubBeginDate = false;
+                          customPubEndDate = false;
                           DateTime now = DateTime.now();
                           if (e == VideoPubTimeType.all) {
                             pubBegin = null;
