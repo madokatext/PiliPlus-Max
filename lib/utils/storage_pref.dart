@@ -1527,6 +1527,17 @@ static int get playerControlDisplayDurationSeconds {
   static bool get showFsLockBtn =>
       _setting.get(SettingBoxKey.showFsLockBtn, defaultValue: true);
 
+  static bool get showFsSkipOpBtn =>
+      _setting.get(SettingBoxKey.showFsSkipOpBtn, defaultValue: true);
+
+  static int get skipOpDurationSeconds {
+    final value = _setting.get(SettingBoxKey.skipOpDurationSeconds);
+    if (value is num && value.isFinite) {
+      return value.toInt().clamp(1, 300).toInt();
+    }
+    return 80;
+  }
+
   static bool get silentDownImg =>
       _setting.get(SettingBoxKey.silentDownImg, defaultValue: false);
 

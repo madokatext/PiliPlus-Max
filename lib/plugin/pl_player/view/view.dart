@@ -929,6 +929,30 @@ ui.PointerDeviceKind? _gesturePointerKind;
         );
       }),
 
+      BottomControlType.skipOp => StreamBuilder(
+        stream: GStorage.setting.watch().where(
+          (event) =>
+              event.key == SettingBoxKey.showFsSkipOpBtn ||
+              event.key == SettingBoxKey.skipOpDurationSeconds,
+        ),
+        builder: (context, _) {
+          if (!Pref.showFsSkipOpBtn) {
+            return const SizedBox.shrink();
+          }
+          return ComBtn(
+            width: widgetWidth,
+            height: controlHeight,
+            tooltip: '跳过 OP（${Pref.skipOpDurationSeconds}秒）',
+            icon: const Icon(
+              Icons.fast_forward_rounded,
+              size: 22,
+              color: Colors.white,
+            ),
+            onTap: plPlayerController.skipOp,
+          );
+        },
+      ),
+
       /// 播放速度
       BottomControlType.speed => PlayerSpeedButton(
         controller: plPlayerController,
@@ -1045,6 +1069,7 @@ ui.PointerDeviceKind? _gesturePointerKind;
       // PlayerBar 会把这一组整体贴右；第一项就是右侧组最左侧按钮。
       if (isNotFileSource) .steinProgress,
       if (isFullScreen) .danmakuToggle,
+      if (isFullScreen) .skipOp,
       if (isNotFileSource && plPlayerController.showDmChart) .dmChart,
       if (isNotFileSource && plPlayerController.showViewPoints) .viewPoints,
       if (isNotFileSource && anySeason) .episode,

@@ -8,6 +8,7 @@ enum BottomControlType {
   fit,
   subtitle,
   danmakuToggle,
+  skipOp,
   speed,
   fullscreen,
   viewPoints,

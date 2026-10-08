@@ -4443,6 +4443,17 @@ void onSeekStart({bool fromGesture = false}) {
     onForwardBackward(videoPlayerController!.state.position + duration);
   }
 
+  void skipOp() {
+    final player = videoPlayerController;
+    if (isLive || player == null || player.state.duration <= Duration.zero) {
+      return;
+    }
+    final target =
+        (player.state.position + Duration(seconds: Pref.skipOpDurationSeconds))
+            .clamp(Duration.zero, player.state.duration);
+    seekTo(target, isSeek: false);
+  }
+
   void onBackward(Duration duration) {
     onForwardBackward(videoPlayerController!.state.position - duration);
   }

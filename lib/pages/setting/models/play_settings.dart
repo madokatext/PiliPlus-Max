@@ -131,6 +131,20 @@ if (PlatformUtils.isMobile)
     setKey: SettingBoxKey.showFsScreenshotBtn,
     defaultVal: true,
   ),
+  const SwitchModel(
+    title: '全屏显示跳过 OP 按钮',
+    subtitle: '在全屏播放器右下角、弹幕开关右侧显示',
+    leading: Icon(Icons.fast_forward_rounded),
+    setKey: SettingBoxKey.showFsSkipOpBtn,
+    defaultVal: true,
+  ),
+  NormalModel(
+    title: '跳过 OP 时长',
+    getSubtitle: () =>
+        '当前：${Pref.skipOpDurationSeconds}秒；从当前播放位置向前跳过',
+    leading: const Icon(Icons.timer_outlined),
+    onTap: _showSkipOpDurationDialog,
+  ),
   SwitchModel(
     title: '全屏显示电池电量',
     leading: const Icon(Icons.battery_3_bar),
@@ -528,6 +542,31 @@ Future<void> _showLongPressSpeedTriggerDelayDialog(
     await GStorage.setting.put(
       SettingBoxKey.longPressSpeedTriggerDelay,
       res.toInt(),
+    );
+    setState();
+  }
+}
+
+Future<void> _showSkipOpDurationDialog(
+  BuildContext context,
+  VoidCallback setState,
+) async {
+  final result = await showDialog<double>(
+    context: context,
+    builder: (context) => SliderDialog(
+      title: const Text('跳过 OP 时长'),
+      value: Pref.skipOpDurationSeconds.toDouble(),
+      min: 1,
+      max: 300,
+      divisions: 299,
+      precise: 0,
+      suffix: '秒',
+    ),
+  );
+  if (result != null) {
+    await GStorage.setting.put(
+      SettingBoxKey.skipOpDurationSeconds,
+      result.round(),
     );
     setState();
   }
