@@ -55,10 +55,23 @@ class SearchVideoData extends SearchNumData<SearchVideoItemModel> {
   SearchVideoData({
     super.numResults,
     super.list,
+    this.numPages,
+    this.hasNext,
   });
+
+  int? numPages;
+  bool? hasNext;
+
+  bool hasMore(int page) => hasNext ?? (numPages == null || page < numPages!);
 
   SearchVideoData.fromJson(Map<String, dynamic> json) {
     numResults = (json['numResults'] as num?)?.toInt();
+    numPages = (json['numPages'] as num?)?.toInt();
+    hasNext = switch (json['next']) {
+      bool value => value,
+      num value => value != 0,
+      _ => null,
+    };
     list = (json['result'] as List?)
         ?.map<SearchVideoItemModel>((e) => SearchVideoItemModel.fromJson(e))
         .toList();

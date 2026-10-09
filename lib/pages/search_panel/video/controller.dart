@@ -42,7 +42,49 @@ class SearchVideoController
   }
 
   @override
+  Future<LoadingState<SearchVideoData>> customGetData() async {
+    final begin = pubBegin;
+    final end = pubEnd;
+    if (begin == null && end == null) {
+      return super.customGetData();
+    }
+    final requestOrder = order;
+    final requestDuration = videoDurationType;
+    final requestZone = videoZoneType;
+    while (true) {
+      final result = await super.customGetData();
+      if (result is! Success<SearchVideoData>) {
+        return result;
+      }
+      final data = result.response;
+      final rawList = data.list;
+      // 接口可能忽略发布时间参数，展示前必须按实际发布时间校验。
+      data.list = rawList?.where((item) {
+        final pubdate = item.pubdate;
+        return pubdate != null &&
+            (begin == null || pubdate >= begin) &&
+            (end == null || pubdate <= end);
+      }).toList();
+      if (isClosed ||
+          pubBegin != begin ||
+          pubEnd != end ||
+          order != requestOrder ||
+          videoDurationType != requestDuration ||
+          videoZoneType != requestZone ||
+          rawList == null ||
+          rawList.isEmpty ||
+          data.list!.isNotEmpty ||
+          !data.hasMore(page)) {
+        return result;
+      }
+      // 空的是筛选后的列表，原始结果仍有下一页时不能提前结束。
+      page++;
+    }
+  }
+
+  @override
   bool customHandleResponse(bool isRefresh, Success<SearchVideoData> response) {
+    isEnd = !response.response.hasMore(page);
     searchResultController?.count[searchType.index] =
         response.response.numResults ?? 0;
     if (searchType == SearchType.video && !hasJump2Video && isRefresh) {
